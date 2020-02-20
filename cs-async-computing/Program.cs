@@ -9,10 +9,11 @@ namespace cs_async_computing
 {
     class Program
     {
-        private delegate UInt64 AsyncSumDel(UInt64 n);
+        // private delegate UInt64 AsyncSumDel(UInt64 n);
+        private delegate UInt64 AsyncFibDel(UInt64 n);
         static void Main(string[] args)
         {
-            AsyncSumDel del = Sum;
+            /*AsyncSumDel del = Sum;
             // AsyncSumDel del = new AsyncSumDel(Sum);
             IAsyncResult ar =
                 del.BeginInvoke(1000000000, EndSum, del);
@@ -21,7 +22,11 @@ namespace cs_async_computing
                 Console.Write(".");
                 Thread.Sleep(500);
             }
-            Console.ReadKey();
+            Console.ReadKey();*/
+            for (UInt64 i = 0; i < 40; i++)
+            {
+                Console.WriteLine(Fib(i));
+            }
         }
 
         // v1
@@ -33,12 +38,22 @@ namespace cs_async_computing
             return sum;
         }
 
-        private static void EndSum(IAsyncResult ar)
+        // v2
+        public static UInt64 Fib(UInt64 n)
+        {
+            if (n == 0 || n == 1)
+            {
+                return n;
+            }
+            return Fib(n - 1) + Fib(n - 2);
+        }
+
+        /*private static void EndSum(IAsyncResult ar)
         {
             AsyncSumDel del = (AsyncSumDel)ar.AsyncState;
             UInt64 res = del.EndInvoke(ar);
             Console.WriteLine("Сумма = " + res);
-        }
+        }*/
         
     }
 }
