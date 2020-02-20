@@ -29,13 +29,13 @@ namespace cs_async_computing
                 Console.WriteLine(Fib(i));
             }*/
 
-            AsyncFibDel del = FibResult;
+            /*AsyncFibDel del = Fib;
             IAsyncResult ar1 =
                 del.BeginInvoke(40, EndSum, del);
             IAsyncResult ar2 =
                 del.BeginInvoke(35, EndSum, del);
             IAsyncResult ar3 =
-                del.BeginInvoke(30, EndSum, del);
+                del.BeginInvoke(30, EndSum, del);*/
 
             Console.ReadKey();
         }
@@ -59,10 +59,35 @@ namespace cs_async_computing
             return Fib(n - 1) + Fib(n - 2);
         }
 
-        public static UInt64 FibResult(UInt64 n)
+        /*public static UInt64 FibResult(UInt64 n)
         {
             // Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
             return Fib(n);
+        }*/
+
+        private static IAsyncResult BuildTask(ulong pos, string tag, List<int> localResult)
+        {
+            AsyncFibDel del = Fib;
+            return del.BeginInvoke(pos, (ar) => {
+                AsyncFibDel func = (AsyncFibDel)ar.AsyncState;
+                UInt64 res = func.EndInvoke(ar);
+                Console.WriteLine($"pos = {pos}; tag = {tag}; res = {res}");
+            }, del);
+        }
+
+        public static void DoWork()
+        {
+           
+            for (int i = 0; i < 100; i++)
+            {
+                List<int> localResults = new List<int>();
+                IAsyncResult ar1 =
+                    BuildTask(40, "A", localResults);
+                IAsyncResult ar2 =
+                    BuildTask(35, "B", localResults);
+                IAsyncResult ar3 =
+                    BuildTask(30, "C", localResults);
+            }
         }
 
         /*private static void EndSum(IAsyncResult ar)
