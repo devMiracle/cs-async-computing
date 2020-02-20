@@ -23,10 +23,21 @@ namespace cs_async_computing
                 Thread.Sleep(500);
             }
             Console.ReadKey();*/
-            for (UInt64 i = 0; i < 40; i++)
+
+            /*for (UInt64 i = 0; i < 40; i++)
             {
                 Console.WriteLine(Fib(i));
-            }
+            }*/
+
+            AsyncFibDel del = FibResult;
+            IAsyncResult ar1 =
+                del.BeginInvoke(40, EndSum, del);
+            IAsyncResult ar2 =
+                del.BeginInvoke(35, EndSum, del);
+            IAsyncResult ar3 =
+                del.BeginInvoke(30, EndSum, del);
+
+            Console.ReadKey();
         }
 
         // v1
@@ -48,12 +59,25 @@ namespace cs_async_computing
             return Fib(n - 1) + Fib(n - 2);
         }
 
+        public static UInt64 FibResult(UInt64 n)
+        {
+            // Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
+            return Fib(n);
+        }
+
         /*private static void EndSum(IAsyncResult ar)
         {
             AsyncSumDel del = (AsyncSumDel)ar.AsyncState;
             UInt64 res = del.EndInvoke(ar);
             Console.WriteLine("Сумма = " + res);
         }*/
-        
+
+        private static void EndSum(IAsyncResult ar)
+        {
+            AsyncFibDel del = (AsyncFibDel)ar.AsyncState;
+            UInt64 res = del.EndInvoke(ar);
+            Console.WriteLine("Fib = " + res);
+            // Console.WriteLine(Thread.CurrentThread.ManagedThreadId);
+        }
     }
 }
